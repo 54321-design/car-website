@@ -1,0 +1,232 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ *
+ * Typefaces — self-hosted latin subsets, variable axes.
+ * Self-hosting removes two render-blocking third-party connections and
+ * lets us `preload` the display face for a clean LCP.
+ * ------------------------------------------------------------------ */
+@font-face {
+  font-family: 'Bodoni Moda';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('/fonts/bodoni-moda-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/manrope-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+/* ------------------------------------------------------------------ *
+ * Design tokens
+ * ------------------------------------------------------------------ */
+@theme {
+  --color-ink: #000000;
+  --color-surface: #0f0f0f;
+  --color-surface-2: #161616;
+  --color-gold: #dc2626;
+  --color-gold-bright: #ef4444;
+  --color-gold-deep: #991b1b;
+  --color-bone: #ffffff;
+  --color-muted: #9f9f9f;
+  --color-divider: rgb(255 255 255 / 0.08);
+
+  --font-display: 'Bodoni Moda', 'Times New Roman', serif;
+  --font-sub: 'Manrope', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  --ease-luxe: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-glide: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --tracking-mega: 0.42em;
+  --tracking-wide-sm: 0.22em;
+
+  --spacing-section: clamp(7rem, 14vh, 12rem);
+}
+
+@layer base {
+  :root {
+    --nav-h: 4.75rem;
+    /* Pointer position in normalised -1..1 space, written once per frame by
+       usePointerField(). Consumed by CSS for depth without React re-renders. */
+    --mx: 0;
+    --my: 0;
+    color-scheme: dark;
+  }
+
+  * {
+    border-color: var(--color-divider);
+  }
+
+  html {
+    /* Lenis owns scrolling; native smooth behaviour would fight it. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  /* Lenis needs the page to scroll on <html>, not a wrapper. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: #000;
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-gold);
+    outline-offset: 4px;
+  }
+
+  /* Screen-reader-only, but focusable (skip link). */
+  .sr-only:not(:focus):not(:active) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  canvas {
+    display: block;
+  }
+
+  img {
+    -webkit-user-drag: none;
+  }
+}
+
+@layer components {
+  /* Editorial display type. Optical sizing does real work on Bodoni at these sizes. */
+  .display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-variation-settings: 'opsz' 96;
+    font-weight: 400;
+    line-height: 0.86;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .eyebrow {
+    font-family: var(--font-sub);
+    font-size: clamp(0.625rem, 0.72vw, 0.75rem);
+    font-weight: 500;
+    letter-spacing: var(--tracking-mega);
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .lede {
+    font-family: var(--font-sub);
+    font-weight: 300;
+    color: var(--color-muted);
+    line-height: 1.6;
+  }
+
+  /* Vertical hairline that draws itself in on reveal. */
+  .rule {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(255 255 255 / 0.16) 18%,
+      rgb(255 255 255 / 0.16) 82%,
+      transparent
+    );
+  }
+
+  .gold-rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-gold-deep), transparent);
+  }
+
+  /* Applied by SplitText-based reveals. Kept in CSS so the mask exists before
+     the JS runs and text can never flash unmasked. */
+  .reveal-mask {
+    overflow: hidden;
+    display: block;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+}
+
+@layer utilities {
+  .will-transform {
+    will-change: transform;
+  }
+
+  .gpu {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Edge-to-edge gutters that stay optically even from 360px to 2560px. */
+  .gutter {
+    padding-inline: clamp(1.25rem, 5vw, 6.5rem);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Reduced motion — strip parallax, scrub and decorative loops, keep
+ * the content and its hierarchy fully intact.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  [data-motion-decorative] {
+    display: none !important;
+  }
+}
