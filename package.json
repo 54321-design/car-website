@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Cinematic scroll-driven product launch experience for the AURELIAN Calibre 01 skeleton automatic.",
+  "description": "Cinematic scroll-driven launch experience for the AURELIAN GT V8 grand tourer.",
   "scripts": {
     "prepare:assets": "node scripts/prepare-assets.mjs",
     "dev": "vite",

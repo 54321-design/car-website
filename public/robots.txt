@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://aurelian.watch/sitemap.xml
+Sitemap: https://aureliangt.com/sitemap.xml

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap, scheduleScrollRefresh } from '@/lib/gsap';
 import { useGsapScope } from '@/hooks/useGsapScope';
 import { LQIP } from '@/data/lqip';
@@ -38,6 +38,13 @@ export function Figure({
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
+  // If already cached or complete, immediately mark loaded so blur never flashes
+  useEffect(() => {
+    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+      setLoaded(true);
+    }
+  }, []);
+
   const scopeRef = useGsapScope<HTMLDivElement>(({ scope }) => {
     const img = imgRef.current;
     if (!img || prefersReducedMotion() || (!parallax && !zoom)) return;
@@ -68,7 +75,7 @@ export function Figure({
         alt=""
         aria-hidden="true"
         className={cn(
-          'absolute inset-0 h-full w-full scale-110 object-cover blur-2xl transition-opacity duration-700',
+          'absolute inset-0 h-full w-full scale-110 object-cover blur-md transition-opacity duration-300',
           loaded ? 'opacity-0' : 'opacity-100',
         )}
       />
@@ -91,11 +98,14 @@ export function Figure({
           scheduleScrollRefresh();
         }}
         className={cn(
-          'relative h-[112%] w-full -translate-y-[6%] object-cover will-transform',
-          'transition-opacity duration-1000 ease-[var(--ease-luxe)]',
+          'relative h-[112%] w-full -translate-y-[6%] object-cover',
+          'transition-opacity duration-300 ease-out',
           loaded ? 'opacity-100' : 'opacity-0',
           imgClassName,
         )}
+        style={{
+          imageRendering: 'auto',
+        }}
       />
     </div>
   );

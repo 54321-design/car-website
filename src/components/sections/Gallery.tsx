@@ -82,7 +82,14 @@ export function Gallery() {
 
 function GalleryCard({ item, onOpen }: { item: GalleryItem; onOpen: () => void }) {
   const ref = useRef<HTMLButtonElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+      setLoaded(true);
+    }
+  }, []);
 
   /**
    * Pointer tilt. Rotation is written through quickTo so repeated pointermove
@@ -144,12 +151,13 @@ function GalleryCard({ item, onOpen }: { item: GalleryItem; onOpen: () => void }
           alt=""
           aria-hidden="true"
           className={cn(
-            'absolute inset-0 h-full w-full scale-110 object-cover blur-xl transition-opacity duration-700',
+            'absolute inset-0 h-full w-full scale-110 object-cover blur-md transition-opacity duration-300',
             loaded ? 'opacity-0' : 'opacity-100',
           )}
         />
         <img
-          src={stillUrl(item.image, 448)}
+          ref={imgRef}
+          src={stillUrl(item.image, 1376)}
           srcSet={stillSrcSet(item.image)}
           sizes="(min-width: 768px) 50vw, 100vw"
           alt={item.caption}
@@ -158,9 +166,10 @@ function GalleryCard({ item, onOpen }: { item: GalleryItem; onOpen: () => void }
           draggable={false}
           onLoad={() => setLoaded(true)}
           className={cn(
-            'h-full w-full object-cover transition-opacity duration-1000',
+            'h-full w-full object-cover transition-opacity duration-300 ease-out',
             loaded ? 'opacity-100' : 'opacity-0',
           )}
+          style={{ imageRendering: 'auto' }}
         />
       </div>
 

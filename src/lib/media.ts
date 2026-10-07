@@ -16,14 +16,13 @@ const SEQ_WIDTHS = [800, 1280] as const;
  * landscape viewport — at 896 native a full-bleed 1440px plate is a 1.6× upscale
  * before DPR, which reads as mush.
  */
-const STILL_WIDTHS = [448, 896] as const;
-export const STILL_MAX_WIDTH = 896;
+const STILL_WIDTHS = [448, 896, 1376] as const;
+export const STILL_MAX_WIDTH = 1376;
 
 /**
- * Frame sequences are decoded one at a time into a canvas, so we pick a single
- * bucket up front rather than letting `srcset` choose per-image. Anything below
- * a 900px layout width — or any device that has told us to save data — gets the
- * 800px set, which is ~40% of the bytes.
+ * Frame sequences are decoded one at a time into a canvas.
+ * We select 1280px master width by default to ensure razor-sharp realism and prevent
+ * fuzzy downscaling on high-DPI and modern desktop displays.
  */
 export function pickSequenceWidth(): (typeof SEQ_WIDTHS)[number] {
   if (typeof window === 'undefined') return 1280;
@@ -31,15 +30,19 @@ export function pickSequenceWidth(): (typeof SEQ_WIDTHS)[number] {
     ?.saveData;
   if (saveData) return 800;
   const css = window.innerWidth;
-  const effective = css * Math.min(window.devicePixelRatio || 1, 2);
-  return css < 900 || effective < 1100 ? 800 : 1280;
+  const dpr = window.devicePixelRatio || 1;
+  return css < 640 && dpr < 1.5 ? 800 : 1280;
 }
 
 export const sequenceFrameUrl = (id: SequenceId, width: number, index: number) =>
   `/media/seq/${id}/w${width}/${String(index).padStart(3, '0')}.webp`;
 
-export const stillUrl = (id: StillId, width: (typeof STILL_WIDTHS)[number] = STILL_MAX_WIDTH) =>
-  `/media/img/w${width}/${id}.webp`;
+export const stillUrl = (id: StillId, width: (typeof STILL_WIDTHS)[number] = STILL_MAX_WIDTH) => {
+  if (width === 1376) {
+    return `/media/img/w1376/${id}.jpeg`;
+  }
+  return `/media/img/w${width}/${id}.webp`;
+};
 
 export const stillSrcSet = (id: StillId) =>
   STILL_WIDTHS.map((w) => `${stillUrl(id, w)} ${w}w`).join(', ');

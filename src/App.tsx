@@ -36,7 +36,7 @@ const Footer = lazy(() => import('@/components/layout/Footer').then((m) => ({ de
  * for is already in the HTTP cache, so replaying a three-second curtain would
  * be theatre at the user's expense rather than for them.
  */
-const INTRO_KEY = 'jaihind:intro-shown';
+const INTRO_KEY = 'aurelian:intro-shown';
 
 function introAlreadyPlayed() {
   try {

@@ -38,7 +38,7 @@ type Props = {
   onReady?: () => void;
 };
 
-const CONCURRENCY = 8;
+const CONCURRENCY = 12;
 
 /**
  * Canvas playback of a WebP frame sequence, scrubbed by scroll.
@@ -109,6 +109,10 @@ export const SequenceCanvas = forwardRef<SequenceHandle, Props>(function Sequenc
       const ctx = canvas.getContext('2d', { alpha: false });
       if (!ctx) return;
 
+      // Maintain high quality image smoothing to prevent pixelation on high-DPI displays
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
       const cw = canvas.width;
       const ch = canvas.height;
       const ratioX = cw / img.naturalWidth;
@@ -145,6 +149,13 @@ export const SequenceCanvas = forwardRef<SequenceHandle, Props>(function Sequenc
     canvas.width = w;
     canvas.height = h;
     dprRef.current = dpr;
+
+    const ctx = canvas.getContext('2d', { alpha: false });
+    if (ctx) {
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+    }
+
     paint(paintedRef.current < 0 ? 0 : paintedRef.current, true);
   }, [paint]);
 
@@ -213,17 +224,34 @@ export const SequenceCanvas = forwardRef<SequenceHandle, Props>(function Sequenc
           }
         });
 
-      // Sequential-with-a-window: frames arrive roughly in playback order, so the
-      // early part of the scrub is usable long before the tail finishes.
+      // Interleaved keyframe loading:
+      // First load keyframes (every 4th frame: 0, 4, 8, ... 116) across the full range
+      // so any scrub position immediately finds an adjacent decoded frame without stutter.
+      // Next load all intermediate frames to achieve full 60fps fidelity.
+      const priorityIndices: number[] = [];
+      const STEP = 4;
+      for (let i = 0; i < FRAME_COUNT; i += STEP) {
+        priorityIndices.push(i);
+      }
+      for (let i = 0; i < FRAME_COUNT; i++) {
+        if (i % STEP !== 0) {
+          priorityIndices.push(i);
+        }
+      }
+
       let cursor = 0;
       const workers = Array.from({ length: CONCURRENCY }, async () => {
-        while (!cancelled && cursor < FRAME_COUNT) await loadOne(cursor++);
+        while (!cancelled && cursor < priorityIndices.length) {
+          const idx = priorityIndices[cursor++];
+          await loadOne(idx);
+        }
       });
       void Promise.all(workers);
     };
 
     // The overture is on screen at load; waiting for an observer callback would
     // cost it a frame it cannot spare.
+    // 250% rootMargin ensures downstream sequences begin preloading before the user scrolls to them.
     const io = eager
       ? null
       : new IntersectionObserver(
@@ -233,7 +261,7 @@ export const SequenceCanvas = forwardRef<SequenceHandle, Props>(function Sequenc
               io?.disconnect();
             }
           },
-          { rootMargin: '100% 0px 100% 0px' },
+          { rootMargin: '250% 0px 250% 0px' },
         );
 
     if (eager) start();
@@ -291,9 +319,13 @@ export const SequenceCanvas = forwardRef<SequenceHandle, Props>(function Sequenc
         ref={canvasRef}
         aria-hidden="true"
         className={cn(
-          'h-full w-full transition-opacity duration-1000 ease-[var(--ease-luxe)]',
+          'h-full w-full transition-opacity duration-500 ease-[var(--ease-luxe)]',
+          'contrast-[1.04] saturate-[1.03] brightness-[1.01]',
           ready ? 'opacity-100' : 'opacity-0',
         )}
+        style={{
+          imageRendering: 'auto',
+        }}
       />
       {/* Announce the sequence to assistive tech, which cannot read a canvas. */}
       <span className="sr-only">{label}</span>

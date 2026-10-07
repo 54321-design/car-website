@@ -112,7 +112,7 @@ export function Specifications() {
       <p className="gutter mt-14 max-w-[52ch] font-body text-[0.8rem] leading-relaxed text-muted">
         Every {BRAND.model} is dyno-tested and certified before it leaves the factory.
         Servicing is recommended at 10,000 km intervals and carried out only by authorised
-        JAIHIND technicians.
+        {' '}{BRAND.name} technicians.
       </p>
     </section>
   );

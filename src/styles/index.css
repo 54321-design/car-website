@@ -131,10 +131,13 @@
 
   canvas {
     display: block;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: auto;
   }
 
   img {
     -webkit-user-drag: none;
+    image-rendering: -webkit-optimize-contrast;
   }
 }
 

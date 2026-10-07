@@ -98,7 +98,7 @@ export function Hero({ started }: Props) {
     <section ref={scopeRef} id="hero" aria-label="Overture" className="relative h-[190svh]">
       <div data-hero-stage className="relative h-svh w-full overflow-hidden">
         {/* Plate ------------------------------------------------------ */}
-        <div data-hero-plate className="absolute inset-0 will-transform gpu">
+        <div data-hero-plate className="absolute inset-0">
           {/* Preloaded still under the canvas: the section has a correct first
               paint (and an LCP candidate) before a single frame has decoded. */}
           <img

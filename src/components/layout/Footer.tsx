@@ -54,13 +54,13 @@ export function Footer() {
 
           {/* Contact ----------------------------------------------- */}
           <div className="lg:col-span-2">
-            <h3 className="font-sub text-[0.58rem] uppercase tracking-[0.3em] text-gold">Showroom</h3>
+            <h3 className="font-sub text-[0.58rem] uppercase tracking-[0.3em] text-gold">Atelier</h3>
             <address className="mt-6 font-body text-[0.85rem] not-italic leading-relaxed text-muted">
-              JAIHIND Motors
+              {BRAND.name} Automobili
               <br />
-              Auto Hub, Sector 18
+              Rue du Rhône 42
               <br />
-              Gurugram, India
+              1204 Genève, Switzerland
             </address>
             <ul className="mt-7 flex gap-3">
               {SOCIALS.map(({ label, Icon }) => (

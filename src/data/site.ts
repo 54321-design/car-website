@@ -1,12 +1,12 @@
 import type { StillId } from '@/lib/media';
 
 export const BRAND = {
-  name: 'JAIHIND',
+  name: 'AURELIAN',
   model: 'GT V8',
-  full: 'JAIHIND GT V8',
+  full: 'AURELIAN GT V8',
   tagline: 'Twin-Turbo Grand Tourer',
-  reference: 'MODEL. JH-GT-V8',
-  price: 'From Rs. 2,50,00,000',
+  reference: 'MODEL. AR-GT-V8',
+  price: 'From $285,000',
   year: new Date().getFullYear(),
 } as const;
 
@@ -250,7 +250,7 @@ export const SPECIFICATIONS = [
 
 export const FOOTER_LINKS = [
   {
-    title: 'JAIHIND',
+    title: 'Marque',
     links: ['Our Story', 'Craftsmanship', 'Heritage', 'Careers'],
   },
   {

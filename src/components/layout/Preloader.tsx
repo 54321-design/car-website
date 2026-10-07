@@ -166,8 +166,8 @@ export function Preloader({ onComplete }: Props) {
         className="sr-only"
       />
 
-      <div data-pre-dial>
-        <WatchOutline />
+      <div data-pre-dial className="flex flex-col items-center">
+        <CarOutline />
       </div>
 
       <div data-pre-meta className="absolute inset-x-0 bottom-[clamp(2.5rem,8vh,5rem)] gutter">
@@ -203,51 +203,75 @@ export function Preloader({ onComplete }: Props) {
 }
 
 /**
- * Watch outline drawn on with stroke-dashoffset. `pathLength="1"` normalises
- * every shape to a unit length, so one dash value drives circles, ticks, lugs
- * and hands alike regardless of their real geometry.
+ * Aerodynamic automotive silhouette drawn on with stroke-dashoffset. `pathLength="1"`
+ * normalises every shape to a unit length, so one dash value drives curves, wheels
+ * and body surfaces alike regardless of their real geometry.
  */
-function WatchOutline() {
+function CarOutline() {
   return (
     <svg
-      viewBox="0 0 200 200"
+      viewBox="0 0 240 120"
       fill="none"
       aria-hidden="true"
-      className="h-[clamp(9rem,26vw,13rem)] w-[clamp(9rem,26vw,13rem)] overflow-visible"
+      className="h-[clamp(5.5rem,16vw,8rem)] w-[clamp(13rem,38vw,20rem)] overflow-visible"
     >
       <g
         stroke="var(--color-gold)"
-        strokeWidth="0.9"
+        strokeWidth="1.1"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path pathLength={1} d="M76 34 L78 21 Q79 15 86 15 L114 15 Q121 15 122 21 L124 34" style={draw(0)} />
-        <path pathLength={1} d="M76 166 L78 179 Q79 185 86 185 L114 185 Q121 185 122 179 L124 166" style={draw(0.1)} />
-        <path pathLength={1} d="M172 94 L182 94 L182 106 L172 106" style={draw(0.2)} />
+        {/* Ground baseline */}
+        <line pathLength={1} x1="12" y1="90" x2="42" y2="90" strokeWidth="0.8" style={draw(0)} />
+        <line pathLength={1} x1="78" y1="90" x2="162" y2="90" strokeWidth="0.8" style={draw(0.08)} />
+        <line pathLength={1} x1="198" y1="90" x2="228" y2="90" strokeWidth="0.8" style={draw(0.16)} />
 
-        <circle pathLength={1} cx="100" cy="100" r="72" style={draw(0.25)} />
-        <circle pathLength={1} cx="100" cy="100" r="63" style={draw(0.45)} />
-        <circle pathLength={1} cx="100" cy="100" r="57" strokeWidth="0.5" style={draw(0.6)} />
+        {/* Front & Rear Wheel Arches */}
+        <path pathLength={1} d="M42 90 A18 18 0 0 1 78 90" strokeWidth="1" style={draw(0.2)} />
+        <path pathLength={1} d="M162 90 A18 18 0 0 1 198 90" strokeWidth="1" style={draw(0.25)} />
 
-        {Array.from({ length: 12 }, (_, i) => {
-          const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
-          return (
-            <line
-              key={i}
-              pathLength={1}
-              x1={100 + Math.cos(angle) * 48}
-              y1={100 + Math.sin(angle) * 48}
-              x2={100 + Math.cos(angle) * 55}
-              y2={100 + Math.sin(angle) * 55}
-              strokeWidth={i % 3 === 0 ? 1.6 : 0.7}
-              style={draw(0.7 + i * 0.012)}
-            />
-          );
-        })}
+        {/* Front Wheel & Centre Hub */}
+        <circle pathLength={1} cx="60" cy="90" r="13" strokeWidth="1" style={draw(0.3)} />
+        <circle pathLength={1} cx="60" cy="90" r="4.5" strokeWidth="1" style={draw(0.38)} />
+        <line pathLength={1} x1="60" y1="77" x2="60" y2="103" strokeWidth="0.6" style={draw(0.42)} />
+        <line pathLength={1} x1="47" y1="90" x2="73" y2="90" strokeWidth="0.6" style={draw(0.45)} />
 
-        <line pathLength={1} x1="100" y1="100" x2="100" y2="62" strokeWidth="1.8" style={draw(0.92)} />
-        <line pathLength={1} x1="100" y1="100" x2="132" y2="118" strokeWidth="1.4" style={draw(0.98)} />
-        <circle pathLength={1} cx="100" cy="100" r="2.4" strokeWidth="1.2" style={draw(1.04)} />
+        {/* Rear Wheel & Centre Hub */}
+        <circle pathLength={1} cx="180" cy="90" r="13" strokeWidth="1" style={draw(0.35)} />
+        <circle pathLength={1} cx="180" cy="90" r="4.5" strokeWidth="1" style={draw(0.4)} />
+        <line pathLength={1} x1="180" y1="77" x2="180" y2="103" strokeWidth="0.6" style={draw(0.44)} />
+        <line pathLength={1} x1="167" y1="90" x2="193" y2="90" strokeWidth="0.6" style={draw(0.48)} />
+
+        {/* Main Aerodynamic Fastback Body Silhouette */}
+        <path
+          pathLength={1}
+          d="M18 88 C18 84 22 75 34 72 C48 70 70 68 88 66 C98 65 108 50 124 42 C134 38 152 38 168 44 C182 50 196 60 212 65 C218 65 224 66 225 68 C226 74 225 82 222 88"
+          strokeWidth="1.4"
+          style={draw(0.52)}
+        />
+
+        {/* Side Cabin Glass (Greenhouse) */}
+        <path
+          pathLength={1}
+          d="M108 61 C116 50 126 44 138 43 C152 43 164 47 172 55 C154 59 132 61 108 61 Z"
+          strokeWidth="0.9"
+          style={draw(0.68)}
+        />
+        <line pathLength={1} x1="142" y1="43" x2="142" y2="61" strokeWidth="0.8" style={draw(0.75)} />
+
+        {/* Shoulder Line Aero Crease */}
+        <path
+          pathLength={1}
+          d="M38 72 C72 70 120 68 180 65 C198 64 212 65 222 67"
+          strokeWidth="0.8"
+          style={draw(0.8)}
+        />
+
+        {/* Headlight Blade */}
+        <path pathLength={1} d="M24 76 Q32 74 38 73" strokeWidth="1.5" style={draw(0.88)} />
+
+        {/* Rear Light Ribbon */}
+        <line pathLength={1} x1="215" y1="67" x2="224" y2="68" strokeWidth="1.6" style={draw(0.92)} />
       </g>
 
       <style>{`
